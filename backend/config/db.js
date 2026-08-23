@@ -1,24 +1,33 @@
 const mongoose = require('mongoose');
 
-let mongoServerInstance = null;
-
 const connectDB = async () => {
   const connUri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/blogapp';
 
   try {
-    // Try connecting to local MongoDB with 1.5s timeout
+    // Attempt connecting to specified MongoDB server (Local or Atlas)
     const conn = await mongoose.connect(connUri, {
-      serverSelectionTimeoutMS: 1500,
+      serverSelectionTimeoutMS: 5000,
     });
     console.log(`MongoDB Connected: ${conn.connection.host}`);
     return conn;
   } catch (error) {
-    console.warn(`Local MongoDB server not detected on port 27017 (${error.message}).`);
-    console.log('Initializing In-Memory MongoDB Server for instant seamless execution...');
+    console.error(`MongoDB connection error (${error.message}).`);
 
+    // In production (e.g. Render), require valid MONGODB_URI connection
+    if (process.env.NODE_ENV === 'production' || process.env.RENDER) {
+      console.error('Production Environment Detected: Ensure MONGODB_URI is valid and 0.0.0.0/0 IP Access is enabled on MongoDB Atlas.');
+      process.exit(1);
+    }
+
+    // In local development/testing, try MongoMemoryServer fallback
+    console.log('Initializing In-Memory MongoDB Server for local testing...');
     try {
       const { MongoMemoryServer } = require('mongodb-memory-server');
-      mongoServerInstance = await MongoMemoryServer.create();
+      const mongoServerInstance = await MongoMemoryServer.create({
+        binary: {
+          version: '7.0.3',
+        },
+      });
       const mongoUri = mongoServerInstance.getUri();
 
       const conn = await mongoose.connect(mongoUri);
