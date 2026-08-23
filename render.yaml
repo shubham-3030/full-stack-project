@@ -1,9 +1,10 @@
 services:
   - type: web
-    name: blog-backend-api
+    name: Blog-Application
     env: node
-    buildCommand: cd backend && npm install
-    startCommand: cd backend && node server.js
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: node server.js
     envVars:
       - key: NODE_ENV
         value: production
