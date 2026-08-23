@@ -1,7 +1,15 @@
 import axios from 'axios';
 
 // Support production backend deployment (Render API URL) or fallback to local backend
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+let API_BASE_URL = import.meta.env.VITE_API_URL;
+
+if (!API_BASE_URL) {
+  // If VITE_API_URL environment variable is not defined on Netlify
+  if (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+    console.warn('VITE_API_URL is not configured on Netlify environment variables.');
+  }
+  API_BASE_URL = 'http://localhost:5000/api';
+}
 
 const API = axios.create({
   baseURL: API_BASE_URL,
