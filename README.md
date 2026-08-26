@@ -15,47 +15,85 @@ A feature-rich, modern Full-Stack Blog Application built using **React.js**, **T
 - 🎨 **Modern Light UI & UX**: Clean Slate light palette, dynamic cards, tag badges, read-time estimates, loading skeletons, and interactive toast alerts.
 - 🔍 **Search & Category Filter**: Search blogs by title, content, or tags with live category filtering.
 - 👤 **User Dashboard & Profile**: Personalized creator stats, published article list, word count metrics, and user profile metadata.
-- ⚡ **Database Integration**: Connects to MongoDB / MongoDB Atlas with in-memory fallback for automated testing.
+- ⚡ **Database Integration**: Connects directly to local MongoDB (`mongodb://127.0.0.1:27017/blogapp`) with an in-memory fallback for automated testing.
 
 ---
 
-## 🚀 Deployment Instructions
+## 🏗️ Technology Stack
 
-### 1. Backend Deployment (Render)
-1. Sign in to [Render](https://render.com/).
-2. Create a **New Web Service** and connect your GitHub repository `https://github.com/Atulparjapat03/Blog-Application.git`.
-3. Configure the service settings:
-   - **Root Directory**: `backend`
-   - **Build Command**: `npm install`
-   - **Start Command**: `node server.js`
-4. Add Environment Variables on Render:
-   - `MONGODB_URI`: Your MongoDB Atlas Connection String
-   - `JWT_SECRET`: Your production secret key
-   - `JWT_EXPIRE`: `30d`
-   - `NODE_ENV`: `production`
-5. Deploy and copy your backend URL (e.g. `https://blog-backend-api.onrender.com`).
+### Frontend
+- **React.js** (Vite)
+- **Tailwind CSS** (Custom theme & light UI)
+- **React Router DOM v6** (Navigation & Protected Routes)
+- **Axios** (API Requests with Authorization header interceptors)
+- **Lucide React** (Modern Icon Pack)
 
-### 2. Frontend Deployment (Netlify)
-1. Sign in to [Netlify](https://www.netlify.com/).
-2. Click **Add new site** > **Import an existing project** > **GitHub**.
-3. Select `https://github.com/Atulparjapat03/Blog-Application.git`.
-4. Configure site settings:
-   - **Base directory**: `frontend`
-   - **Build command**: `npm run build`
-   - **Publish directory**: `frontend/dist`
-5. Add Environment Variables on Netlify:
-   - `VITE_API_URL`: `https://blog-backend-api.onrender.com/api` *(Your Render backend API URL)*
-6. Deploy site!
+### Backend
+- **Node.js & Express.js** (RESTful API)
+- **MongoDB & Mongoose** (Data Modeling & Schema Validation)
+- **JSON Web Tokens (JWT)** (Secure Token Authentication)
+- **bcryptjs** (Password Hashing)
 
 ---
 
-## 💻 Local Development Setup
+## 📁 Project Structure
+
+```
+Full Stack Project/
+├── backend/
+│   ├── config/
+│   │   └── db.js                 # MongoDB connection & fallback setup
+│   ├── controllers/
+│   │   ├── authController.js     # Register, Login, GetMe
+│   │   └── blogController.js     # Create, GetAll, GetOne, Update, Delete
+│   ├── middleware/
+│   │   └── authMiddleware.js     # JWT token verification middleware
+│   ├── models/
+│   │   ├── User.js               # Mongoose User model with bcrypt pre-save hook
+│   │   └── Blog.js               # Mongoose Blog model with Author reference
+│   ├── routes/
+│   │   ├── authRoutes.js         # /api/auth endpoints
+│   │   └── blogRoutes.js         # /api/blogs endpoints
+│   ├── seed.js                   # Database seeder script
+│   ├── server.js                 # Express application entry point
+│   ├── .env.example              # Environment configuration template
+│   └── package.json
+├── frontend/
+│   ├── src/
+│   │   ├── components/           # Navbar, Footer, BlogCard, ProtectedRoute, Toast, Skeleton
+│   │   ├── context/              # AuthContext (global state, login, register, token)
+│   │   ├── pages/                # Home, BlogDetails, CreateBlog, EditBlog, MyBlogs, Profile, Login, Register, NotFound
+│   │   ├── services/             # Axios API service configuration
+│   │   ├── App.jsx               # React Router configuration
+│   │   ├── main.jsx              # Application entry point
+│   │   └── index.css             # Tailwind CSS & utilities
+│   ├── index.html
+│   ├── tailwind.config.js
+│   ├── vite.config.js
+│   └── package.json
+├── .gitignore                    # Ignores node_modules, dist/, and .env
+├── package.json                  # Root runner script
+└── README.md
+```
+
+---
+
+## 🚀 Getting Started
 
 ### 1. Install Dependencies
-Run from the root directory:
+Run from the project root directory:
 
 ```bash
 npm run install:all
+```
+
+Or install individually:
+```bash
+# Backend
+cd backend && npm install
+
+# Frontend
+cd ../frontend && npm install
 ```
 
 ### 2. Configure Environment Variables
@@ -69,12 +107,14 @@ JWT_EXPIRE=30d
 NODE_ENV=development
 ```
 
-### 3. Run Locally
+### 3. Run the Application
+Start backend and frontend concurrently:
+
 ```bash
 npm run dev
 ```
 
-Open your browser at **`http://localhost:3000`**.
+Open your browser and navigate to: **`http://localhost:3000`**
 
 ---
 
@@ -95,7 +135,7 @@ Open your browser at **`http://localhost:3000`**.
 
 ## 🧪 Database Seeding
 
-To populate sample users and blog posts, run:
+To populate sample users and blog posts into your local MongoDB, run:
 
 ```bash
 cd backend

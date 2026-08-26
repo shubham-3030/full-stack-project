@@ -26,27 +26,13 @@ function App() {
           <Navbar />
           <div className="flex-grow">
             <Routes>
-              {/* Public Auth Routes */}
+              {/* Public Routes - Anyone can browse home and read blogs */}
+              <Route path="/" element={<Home />} />
+              <Route path="/blogs/:id" element={<BlogDetails />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
 
-              {/* Protected Routes (Logged-in users only per PDF assignment specs) */}
-              <Route
-                path="/"
-                element={
-                  <ProtectedRoute>
-                    <Home />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/blogs/:id"
-                element={
-                  <ProtectedRoute>
-                    <BlogDetails />
-                  </ProtectedRoute>
-                }
-              />
+              {/* Protected Routes (Authentication & Ownership Required) */}
               <Route
                 path="/create-blog"
                 element={

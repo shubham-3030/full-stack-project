@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Filter, Sparkles, PlusCircle, AlertCircle } from 'lucide-react';
+import { Search, Filter, Sparkles, PlusCircle, AlertCircle, RefreshCw } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { blogAPI } from '../services/api';
 import BlogCard from '../components/BlogCard';
@@ -13,6 +13,7 @@ const Home = () => {
   const { isAuthenticated } = useAuth();
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [toast, setToast] = useState({ message: '', type: 'success' });
@@ -20,6 +21,7 @@ const Home = () => {
 
   const fetchBlogs = async () => {
     setLoading(true);
+    setFetchError(false);
     try {
       const params = {};
       if (searchQuery.trim()) params.search = searchQuery.trim();
@@ -31,10 +33,7 @@ const Home = () => {
       }
     } catch (err) {
       console.error('Error fetching blogs:', err);
-      setToast({
-        message: 'Failed to load blogs. Please try again.',
-        type: 'error',
-      });
+      setFetchError(true);
     } finally {
       setLoading(false);
     }
@@ -144,10 +143,34 @@ const Home = () => {
               {blogs.length}
             </span>
           </h2>
+          {fetchError && (
+            <button
+              onClick={fetchBlogs}
+              className="inline-flex items-center space-x-1.5 text-xs font-semibold text-brand-600 hover:text-brand-700 bg-brand-50 border border-brand-200 px-3 py-1.5 rounded-xl transition"
+            >
+              <RefreshCw className="w-3.5 h-3.5" />
+              <span>Retry Connecting</span>
+            </button>
+          )}
         </div>
 
         {loading ? (
           <LoadingSkeleton />
+        ) : fetchError ? (
+          <div className="bg-white rounded-3xl p-10 text-center max-w-lg mx-auto my-10 border border-slate-200 shadow-sm">
+            <AlertCircle className="w-12 h-12 text-amber-500 mx-auto mb-3" />
+            <h3 className="text-lg font-bold text-slate-800">Connecting to Backend API</h3>
+            <p className="text-slate-600 text-xs mt-1 leading-relaxed">
+              Render free instances may spin down after inactivity. Please wait a few seconds and click retry.
+            </p>
+            <button
+              onClick={fetchBlogs}
+              className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl bg-brand-600 text-white font-semibold text-sm mt-5 hover:bg-brand-700 transition shadow-sm"
+            >
+              <RefreshCw className="w-4 h-4" />
+              <span>Retry Connection</span>
+            </button>
+          </div>
         ) : blogs.length === 0 ? (
           <div className="bg-white rounded-3xl p-12 text-center max-w-xl mx-auto my-12 border border-slate-200 shadow-sm">
             <div className="w-16 h-16 bg-brand-50 rounded-2xl flex items-center justify-center mx-auto mb-4 text-brand-600">

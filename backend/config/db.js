@@ -1,7 +1,10 @@
 const mongoose = require('mongoose');
 
 const connectDB = async () => {
-  const connUri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/blogapp';
+  const connUri =
+    process.env.MONGODB_URI ||
+    process.env.MONGO_URI ||
+    'mongodb://127.0.0.1:27017/blogapp';
 
   try {
     // Attempt connecting to specified MongoDB server (Local or Atlas)
@@ -13,9 +16,11 @@ const connectDB = async () => {
   } catch (error) {
     console.error(`MongoDB connection error (${error.message}).`);
 
-    // In production (e.g. Render), require valid MONGODB_URI connection
+    // In production (e.g. Render), require valid MongoDB connection
     if (process.env.NODE_ENV === 'production' || process.env.RENDER) {
-      console.error('Production Environment Detected: Ensure MONGODB_URI is valid and 0.0.0.0/0 IP Access is enabled on MongoDB Atlas.');
+      console.error(
+        'Production Environment Detected: Ensure MONGODB_URI/MONGO_URI is valid and 0.0.0.0/0 IP Access is enabled on MongoDB Atlas.'
+      );
       process.exit(1);
     }
 
@@ -31,10 +36,14 @@ const connectDB = async () => {
       const mongoUri = mongoServerInstance.getUri();
 
       const conn = await mongoose.connect(mongoUri);
-      console.log(`In-Memory MongoDB Connected successfully: ${conn.connection.host}`);
+      console.log(
+        `In-Memory MongoDB Connected successfully: ${conn.connection.host}`
+      );
       return conn;
     } catch (memError) {
-      console.error(`Failed to connect to In-Memory MongoDB: ${memError.message}`);
+      console.error(
+        `Failed to connect to In-Memory MongoDB: ${memError.message}`
+      );
       process.exit(1);
     }
   }

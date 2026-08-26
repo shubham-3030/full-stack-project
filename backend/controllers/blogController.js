@@ -2,7 +2,7 @@ const Blog = require('../models/Blog');
 
 // @desc    Get all blog posts with search & category filters
 // @route   GET /api/blogs
-// @access  Private (Authenticated users only)
+// @access  Public (or Logged-in per authorization rules)
 const getAllBlogs = async (req, res) => {
   try {
     const { search, category, author } = req.query;
@@ -44,7 +44,7 @@ const getAllBlogs = async (req, res) => {
 
 // @desc    Get single blog post by ID
 // @route   GET /api/blogs/:id
-// @access  Private (Authenticated users only)
+// @access  Public
 const getBlogById = async (req, res) => {
   try {
     const blog = await Blog.findById(req.params.id).populate(
